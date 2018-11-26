@@ -4,8 +4,11 @@ import scrapy
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
-    allowed_domains = ['bolg.jobbole.com']
-    start_urls = ['http://bolg.jobbole.com/']
+    allowed_domains = ['blog.jobbole.com']
+    start_urls = ['http://blog.jobbole.com/110287/']
 
     def parse(self, response):
-        pass
+        re_selector = response.xpath('//*[@id="post-110287"]/div[1]/h1')
+
+
+    

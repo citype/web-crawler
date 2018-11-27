@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-
+import re
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
@@ -8,7 +8,32 @@ class JobboleSpider(scrapy.Spider):
     start_urls = ['http://blog.jobbole.com/110287/']
 
     def parse(self, response):
-        re_selector = response.xpath('//*[@id="post-110287"]/div[1]/h1')
+        """
+        调用 extract 方法
+        变成一个数组值，无法进一步 xpath
+        """
+        create_data = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/text()').extract()[0].strip().replace("/",".")
+        title = response.xpath('//*[@id="post-110287"]/div[1]/h1/text()').extract()[0]
+        # 为什么会为空？ 包含某个 class 名称
+        vote = response.xpath("//span[@class='vote-post-up']/text()")
+        # 需要使用 contains 函数来调用 span 中包含的某种类名
+        vote = response.xpath("//span[contains(@class, 'vote-post-up')]/h10/text()").extract()[0]
+        fav_nums = response.xpath("//span[contains(@class,'bookmark-btn')]/text()").extract()[0]
+        match_re = re.match(".*(\d+).*",fav_nums)
+        if match_re:
+            fav_nums = match_re.group(1)
+
+        comment_nums = response.xpath("//a[@href='#article-comment']/span").extract()
+        match_re = re.match(".*(\d+).*",comment_nums)
+        if match_re:
+            comment_nums = match_re.group(1)
+        
+        content = response.xpath("//div[@class='entry']").extract()[0]
+
+        # 通过数组的方式 进行过滤
+        tag_list = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/a/text()').extract()
+        [element for element in tag_list if element.endswith("评论")]
+        print("---->",title)
 
 
     

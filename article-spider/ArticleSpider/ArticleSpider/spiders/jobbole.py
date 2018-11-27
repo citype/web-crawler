@@ -3,6 +3,7 @@ import scrapy
 import re
 from scrapy.http import Request
 from urllib import parse
+from ArticleSpider.items import JobBoleArticleItem
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
@@ -32,6 +33,9 @@ class JobboleSpider(scrapy.Spider):
     提取文章的具体字段
     """
     def parse_detail(self, response):
+        article_item = JobBoleArticleItem()
+
+
         title = response.xpath('//*[@id="post-110287"]/div[1]/h1/text()').extract()[0]
         
         """
@@ -39,7 +43,7 @@ class JobboleSpider(scrapy.Spider):
         """
         # 文章封面图
         front_image_url = response.meta.get(front_image_url,"")
-        create_data = response.css("p.entry-meta-hide-on-mobile::text").extract()[0].strip().replace("/",".")
+        create_date = response.css("p.entry-meta-hide-on-mobile::text").extract()[0].strip().replace("/",".")
         praise_nums = response.css(".vote-post-up h10::text").extract()[0]
         fav_nums = response.css(".bookmark-btn::text").extract()[0]
         match_re = re.match(".*？(\d+).*",fav_nums)
@@ -54,6 +58,18 @@ class JobboleSpider(scrapy.Spider):
         tags = response.css(".entry-meta-hide-on-mobile a::text").extract()[0]
         [element for element in tags if not element.endswith("评论")]
         tags = ','.join(tags)
+
+        article_item["title"] = title
+        article_item["url"] = response.url
+        article_item["create_date"] = create_date
+        article_item["front_image_url"] = front_image_url
+        article_item["praise_nums"] = praise_nums
+        article_item["comment_nums"] = comment_nums
+        article_item["fav_nums"] = fav_nums
+        article_item["tags"] = tags
+        article_item["content"] = content
+
+        yield article_item
 
 
 

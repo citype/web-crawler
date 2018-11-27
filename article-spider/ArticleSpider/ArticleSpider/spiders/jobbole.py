@@ -32,8 +32,9 @@ class JobboleSpider(scrapy.Spider):
 
         # 通过数组的方式 进行过滤
         tag_list = response.xpath('//p[@class="entry-meta-hide-on-mobile"]/a/text()').extract()
-        [element for element in tag_list if element.endswith("评论")]
-        print("---->",title)
+        [element for element in tag_list if not element.endswith("评论")]
+        tag = ','.join(tag_list)
+        
 
 
     

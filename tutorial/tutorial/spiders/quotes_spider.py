@@ -35,8 +35,9 @@ class QuotesSpider(scrapy.Spider):
             }
         next_page = response.css('li.next a::attr(href)').extract_first()
         if next_page is not None:
-            next_page = response.urljoin(next_page)
-            yield scrapy.Request(next_page, callback=self.parse)
+            yield response.follow(next_page, callback=self.parse)
+            # 也可以使用 response。follow 来进行访问，
+
     
     """
     以上代码，只要调用命令

@@ -33,9 +33,19 @@ class QuotesSpider(scrapy.Spider):
                 'author':quote.css('small.author::text').extract_first(),
                 'tags':quote.css('div.tags a.tag::text').extract(),
             }
+        next_page = response.css('li.next a::attr(href)').extract_first()
+        if next_page is not None:
+            next_page = response.urljoin(next_page)
+            yield scrapy.Request(next_page, callback=self.parse)
     
     """
     以上代码，只要调用命令
     scrapy shell 'http://quotes.toscrape.com/page/1/'
     就会产生默认结构。
+    """
+
+    """
+    最简单的方式去保存 scrapy data:
+    scrapy crawl quotes -o quotes.json
+    就能看到当前文件目录下生成的 json 文件
     """

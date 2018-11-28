@@ -4,6 +4,8 @@ import re
 from scrapy.http import Request
 from urllib import parse
 from ArticleSpider.items import JobBoleArticleItem
+from ArticleSpider.utils.common  import get_md5
+import datetime
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
@@ -43,7 +45,7 @@ class JobboleSpider(scrapy.Spider):
         """
         使用 css 选择器
         """
-        
+
         front_image_url = response.meta.get("front_image_url", "")  #文章封面图
         title = response.css(".entry-header h1::text").extract()[0]
         create_date = response.css("p.entry-meta-hide-on-mobile::text").extract()[0].strip().replace("·","").strip()

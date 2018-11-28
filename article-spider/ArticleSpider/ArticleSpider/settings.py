@@ -67,6 +67,7 @@ ROBOTSTXT_OBEY = False
 ITEM_PIPELINES = {
    'ArticleSpider.pipelines.ArticlespiderPipeline': 1,
    # 'ArticleSpider.pipelines.ArticleImagePipeline': 3,
+   'ArticleSpider.pipelines.JsonExporterPipeline':2,
 }
 IMAGES_URLS_FIELD = "front_image_url"
 project_dir = os.path.abspath(os.path.dirname(__file__))
